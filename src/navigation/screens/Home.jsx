@@ -1,14 +1,20 @@
-import { View, Text, Pressable, FlatList, SectionList } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
+import { View, Text, Pressable, SectionList } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+
+import axios from "axios";
 import { API_BASE_URL } from "../../util/config";
+import { useAuth } from "../../context/AuthContext";
+
+import Feather from "@expo/vector-icons/Feather";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function Home() {
+  const { user } = useAuth();
   const navigation = useNavigation();
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -69,28 +75,38 @@ export default function Home() {
       {/* Analytics Header */}
       <View className="mb-6">
         <Text className="text-2xl font-bold mb-2 text-gray-900">Analytics</Text>
-        <View className="flex-row justify-between">
-          <View className="bg-blue-100 p-4 rounded-xl w-[30%]">
-            <Text className="text-sm text-gray-500">Pending</Text>
-            <Text className="text-xl font-semibold text-blue-700">
-              {orders.filter((o) => o.status === "pending").length}
-            </Text>
+        <View className="flex-row items-center justify-between">
+          {/* Pending */}
+          <View className="bg-blue-100 p-4 rounded-xl w-[30%] items-center">
+            <View className="flex-row items-center justify-center gap-x-2 mb-1">
+              <MaterialIcons name="pending-actions" size={20} color="#1D4ED8" />
+              <Text className="text-xl font-semibold text-blue-700">
+                {orders.filter((o) => o.status === "pending").length}
+              </Text>
+            </View>
+            <Text className="text-base text-gray-500">Pending</Text>
           </View>
-          <View className="bg-green-100 p-4 rounded-xl w-[30%]">
-            <Text className="text-sm text-gray-500">Delivered</Text>
-            <Text className="text-xl font-semibold text-green-700">
-              {orders.filter((o) => o.status === "delivered").length}
-            </Text>
+
+          {/* Delivered */}
+          <View className="bg-green-100 p-4 rounded-xl w-[30%] items-center">
+            <View className="flex-row items-center justify-center gap-x-2 mb-1">
+              <Feather name="shopping-bag" size={20} color="#059669" />
+              <Text className="text-xl font-semibold text-green-700">
+                {orders.filter((o) => o.status === "delivered").length}
+              </Text>
+            </View>
+            <Text className="text-base text-gray-500">Delivered</Text>
           </View>
-          <View className="bg-yellow-100 p-4 rounded-xl w-[30%]">
-            <Text className="text-sm text-gray-500">Earnings</Text>
-            <Text className="text-xl font-semibold text-yellow-700">
-              ₹
-              {orders.reduce(
-                (acc, curr) => acc + (curr.deliveryCharge || 0),
-                0
-              )}
-            </Text>
+
+          {/* Earnings */}
+          <View className="bg-yellow-100 p-4 rounded-xl w-[30%] items-center">
+            <View className="flex-row items-center justify-center gap-x-1 mb-1">
+              <MaterialIcons name="currency-rupee" size={20} color="#CA8A04" />
+              <Text className="text-xl font-semibold text-yellow-700">
+                {user?.earnings || 0}
+              </Text>
+            </View>
+            <Text className="text-base text-gray-500">Earnings</Text>
           </View>
         </View>
       </View>
@@ -102,6 +118,7 @@ export default function Home() {
       ) : (
         <SectionList
           sections={groupedSections}
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item._id}
           renderSectionHeader={({ section: { title } }) => (
             <Text className="text-lg font-bold mt-4 mb-2 text-gray-700">
@@ -111,14 +128,24 @@ export default function Home() {
           renderItem={({ item }) => (
             <Pressable
               onPress={() => navigateToOrder(item._id)}
-              className="bg-gray-100 p-4 rounded-lg mb-2"
+              className="bg-gray-100 p-3 rounded-full mb-2"
             >
-              <Text className="font-semibold text-gray-900">
-                {item.user?.name || "Unknown"}
-              </Text>
-              <Text className="text-sm text-gray-800 mt-1">
-                Total: ₹{item.finalAmount}
-              </Text>
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row gap-x-4">
+                  <View className="bg-gray-200 w-14 h-14 items-center justify-center rounded-full">
+                    <Feather name="box" size={24} color="green" />
+                  </View>
+                  <View>
+                    <Text className="font-semibold text-gray-900">
+                      {item.user?.name || "Unknown"}
+                    </Text>
+                    <Text className="text-sm text-gray-800 mt-1">
+                      Total: ₹{item.finalAmount}
+                    </Text>
+                  </View>
+                </View>
+                <Feather name="chevron-right" size={24} color="#9CA3AF" />
+              </View>
             </Pressable>
           )}
         />

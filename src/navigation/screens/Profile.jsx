@@ -5,12 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
-  // const user = {
-  //   name: "Sam",
-  //   email: "sam@gmail.com",
-  //   phone: "1234567890",
-  // };
-  // const logout = () => {};
+
   return (
     <SafeAreaView className="flex-1 bg-white px-5">
       <ScrollView>
@@ -30,8 +25,8 @@ export default function ProfileScreen() {
             Your Activity
           </Text>
 
-          {NavRow("shopping-bag", "Order History", () => {})}
-          {NavRow("heart", "Wishlist", () => {})}
+          {NavRow("shopping-bag", "Delivery History", () => {})}
+          {NavRow("heart", "Earnings", () => {})}
         </View>
 
         {/* Static Options */}
@@ -40,7 +35,7 @@ export default function ProfileScreen() {
             Account & Support
           </Text>
           {NavRow("help-circle", "Support", () => {})}
-          {NavRow("info", "About Us", () => {})}
+          {NavRow("info", "Refer and Earn", () => {})}
           {NavRow("log-out", "Logout", logout)}
         </View>
       </ScrollView>
