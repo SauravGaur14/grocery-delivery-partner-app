@@ -1,16 +1,16 @@
 import { Feather } from "@expo/vector-icons";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import { useUser } from "../../src/context/UserContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ProfileScreen() {
-  // const { user, logout } = useUser();
-  const user = {
-    name: "Sam",
-    email: "sam@gmail.com",
-    phone: "1234567890",
-  };
-  const logout = () => {};
+  const { user, logout } = useAuth();
+  // const user = {
+  //   name: "Sam",
+  //   email: "sam@gmail.com",
+  //   phone: "1234567890",
+  // };
+  // const logout = () => {};
   return (
     <SafeAreaView className="flex-1 bg-white px-5">
       <ScrollView>
@@ -20,7 +20,7 @@ export default function ProfileScreen() {
             Personal Info
           </Text>
           {InfoRow("user", user?.name)}
-          {InfoRow("phone", user?.phone)}
+          {InfoRow("phone", user?.mobile)}
           {InfoRow("mail", user?.email)}
         </View>
 

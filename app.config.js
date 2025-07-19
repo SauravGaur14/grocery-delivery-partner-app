@@ -5,7 +5,7 @@ export default {
     slug: "grocery-delivery-partner",
     version: "1.0.0",
     extra: {
-      apiUrl: process.env.API_BASE_URL,
+      API_BASE_URL: process.env.API_BASE_URL,
     },
     orientation: "portrait",
     icon: "./assets/icon.png",
