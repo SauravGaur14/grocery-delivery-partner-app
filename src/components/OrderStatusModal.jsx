@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
-const statuses = ["Out for Delivery", "Delivered", "Cancelled"];
+const statuses = ["Out for Delivery", "Delivered", "Return"];
 
 export default function OrderStatusModal({
   visible,

@@ -10,6 +10,8 @@ import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OrderStatusModal from "../../components/OrderStatusModal";
+import EarningsModal from "../../components/EarningsModal";
+
 import { Linking } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -22,13 +24,13 @@ export default function OrderDetail() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showEarningsModal, setShowEarningsModal] = useState(false);
+  const [earnedAmount, setEarnedAmount] = useState(0);
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const res = await axios.get(
-          `${API_BASE_URL}/${orderId}`
-        );
+        const res = await axios.get(`${API_BASE_URL}/orders/${orderId}`);
         setOrder(res.data);
       } catch (err) {
         console.error("Failed to fetch order:", err);
@@ -39,6 +41,24 @@ export default function OrderDetail() {
 
     fetchOrder();
   }, [orderId]);
+
+  const statusUpdateHandler = async (newStatus) => {
+    try {
+      const res = await axios.put(
+        `${API_BASE_URL}/orders/${order._id}/status`,
+        {
+          status: newStatus,
+        }
+      );
+      setOrder(res.data);
+      if (newStatus.toLowerCase() === "delivered") {
+        setEarnedAmount(res.data.deliveryCharge || 0);
+        setShowEarningsModal(true);
+      }
+    } catch (err) {
+      console.error("Failed to update order status:", err);
+    }
+  };
 
   if (loading) {
     return (
@@ -78,7 +98,7 @@ export default function OrderDetail() {
         </View>
 
         {/* Customer Details */}
-        <View className="mt-6">
+        <View className="mt-6 pb-2 border-b border-gray-200">
           <Text className="text-2xl font-bold mb-4 text-green-700">
             Customer Details
           </Text>
@@ -89,50 +109,11 @@ export default function OrderDetail() {
             </View>
           </View>
 
-          {order.user?.addresses?.length > 0 && (
-            <View className="flex-row justify-between my-2">
-              <Text className="text-gray-800 font-semibold">Address:</Text>
-              <Pressable
-                onPress={() => {
-                  const defaultAddr = order.user.addresses.find(
-                    (a) => a.isDefault
-                  );
-                  if (
-                    defaultAddr?.coordinates?.lat &&
-                    defaultAddr?.coordinates?.lng
-                  ) {
-                    const { lat, lng } = defaultAddr.coordinates;
-                    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-                    Linking.openURL(url);
-                  }
-                }}
-                className="justify-end space-x-2 bg-green-600 flex-row items-center gap-x-2 p-2 rounded-full max-w-[70%]"
-              >
-                <FontAwesome5 name="directions" size={18} color="white" />
-                <Text className="text-white text-sm truncate">
-                  {order.user.addresses.find((a) => a.isDefault)?.landmark}..
-                </Text>
-              </Pressable>
-            </View>
-          )}
-
-          {/* Call Customer Button */}
-          <View className="mt-3 flex-row items-center justify-between border-b border-gray-200 pb-2">
-            <Text className="text-gray-800 font-semibold">
-              Contact Customer
+          <View className="flex-row justify-between my-2">
+            <Text className="text-gray-800 font-semibold">Address:</Text>
+            <Text className="text-gray-600 text-sm truncate">
+              {order?.deliveryAddress?.landmark || "No Address"}
             </Text>
-            <Pressable
-              onPress={() => Linking.openURL(`tel:${order.user?.phone}`)}
-              className="bg-green-600 flex-row items-center gap-x-2 p-2 rounded-full w-20"
-            >
-              <Ionicons
-                name="call-outline"
-                size={16}
-                color="white"
-                className="mr-1"
-              />
-              <Text className="text-white font-medium ml-1">Call</Text>
-            </Pressable>
           </View>
         </View>
 
@@ -164,7 +145,7 @@ export default function OrderDetail() {
         </View>
 
         {/* Payment Summary */}
-        <View className="mt-6">
+        <View className="mt-6 pb-2 border-b border-gray-200">
           <Text className="text-2xl font-semibold text-green-700 mb-3">
             Payment Summary
           </Text>
@@ -177,22 +158,70 @@ export default function OrderDetail() {
           </Text>
         </View>
 
+        {/* Customer contact and address */}
+        {order.status !== "delivered" && (
+          <View className="mt-6">
+            <Text className="text-2xl font-semibold my-4 text-green-700">
+              Delivery Details
+            </Text>
+            {/* map */}
+            <View className="flex-row items-center justify-between ">
+              <Pressable
+                onPress={() => {
+                  const coords = order?.deliveryAddress?.coordinates;
+                  if (coords?.lat && coords?.lng) {
+                    const url = `https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`;
+                    Linking.openURL(url);
+                  }
+                }}
+                className="justify-between space-x-2 bg-green-600 flex-row items-center gap-x-2 p-2 rounded-full  w-[48%]"
+              >
+                <FontAwesome5 name="directions" size={20} color="white" />
+                <Text
+                  className="text-white text-sm max-w-32"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {order?.deliveryAddress?.landmark || "No Address"}
+                </Text>
+              </Pressable>
+
+              {/* Call Customer Button */}
+              <Pressable
+                onPress={() => Linking.openURL(`tel:${order.user?.phone}`)}
+                className="bg-green-600 items-center justify-center rounded-full w-12 h-12"
+              >
+                <Ionicons
+                  name="call-outline"
+                  size={20}
+                  color="white"
+                  className="mr-1"
+                />
+              </Pressable>
+            </View>
+          </View>
+        )}
+
         <OrderStatusModal
           visible={showStatusModal}
           onClose={() => setShowStatusModal(false)}
-          onUpdate={(newStatus) => {
-            setOrder({ ...order, status: newStatus });
-            // Optionally make PUT /api/orders/:id/status API call here
-          }}
+          onUpdate={statusUpdateHandler}
           currentStatus={order.status}
         />
+        <EarningsModal
+          visible={showEarningsModal}
+          onClose={() => setShowEarningsModal(false)}
+          amount={earnedAmount}
+        />
       </ScrollView>
-      <Pressable
-        onPress={() => setShowStatusModal(true)}
-        className="mt-2 mb-4 bg-green-600 text-xl text-center py-4 items-center rounded-full absolute bottom-10 w-40 self-center"
-      >
-        <Text className="text-white font-medium">Update Status</Text>
-      </Pressable>
+      {order.status !== "delivered" && (
+        <Pressable
+          onPress={() => setShowStatusModal(true)}
+          className="mt-2 mb-4 bg-green-600 text-xl text-center py-4 items-center rounded-full absolute bottom-10 w-40 self-center"
+        >
+          <Text className="text-white font-medium">Update Status</Text>
+        </Pressable>
+      )}
     </SafeAreaView>
   );
 }
