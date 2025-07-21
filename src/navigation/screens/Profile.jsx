@@ -2,9 +2,11 @@ import { Feather } from "@expo/vector-icons";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView className="flex-1 bg-white px-5">
@@ -25,7 +27,9 @@ export default function ProfileScreen() {
             Your Activity
           </Text>
 
-          {NavRow("shopping-bag", "Delivery History", () => {})}
+          {NavRow("shopping-bag", "Delivery History", () =>
+            navigation.navigate("DeliveryHistory")
+          )}
           {NavRow("heart", "Earnings", () => {})}
         </View>
 
