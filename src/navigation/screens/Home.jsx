@@ -6,31 +6,75 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import { API_BASE_URL } from "../../util/config";
 import { useAuth } from "../../context/AuthContext";
+import OrderItem from "../../components/OrderItem";
+import QrScannerModal from "../../components/QrScannerModal";
 
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function Home() {
   const { user } = useAuth();
   const navigation = useNavigation();
-
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const navigateToOrder = (orderId) => {
-    navigation.navigate("OrderDetail", { orderId });
-  };
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [showScanner, setShowScanner] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       const fetchOrders = async () => {
+        if (!user?.id) return;
+
         try {
           setLoading(true);
-          const res = await axios.get(`${API_BASE_URL}/orders`);
+
+          const now = new Date();
+
+          const startOfDay = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(), // midnight
+            0,
+            0,
+            0,
+            0
+          );
+
+          const endOfDay = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(), // 1 ms before tomorrow
+            23,
+            59,
+            59,
+            999
+          );
+
+          const res = await axios.get(
+            `${API_BASE_URL}/orders/delivery/${user.id}`,
+            {
+              params: {
+                start: startOfDay.toISOString(),
+                end: endOfDay.toISOString(),
+              },
+            }
+          );
+
           setOrders(res.data);
+
+          // Filter delivered orders and sum their deliveryCharge
+          const deliveredOrders = res.data.filter(
+            (order) => order.status.toLowerCase() === "delivered"
+          );
+          const totalEarnings = deliveredOrders.reduce((sum, order) => {
+            return sum + (order.deliveryCharge || 0);
+          }, 0);
+
+          setTotalEarnings(totalEarnings);
+          setTotalEarnings(totalEarnings);
         } catch (err) {
-          console.error("Failed to fetch orders", err);
+          console.error("Failed to fetch today's orders", err);
         } finally {
           setLoading(false);
         }
@@ -102,7 +146,7 @@ export default function Home() {
             <View className="flex-row items-center justify-center gap-x-1 mb-1">
               <MaterialIcons name="currency-rupee" size={20} color="#CA8A04" />
               <Text className="text-xl font-semibold text-yellow-700">
-                {user?.earnings || 0}
+                {totalEarnings}
               </Text>
             </View>
             <Text className="text-base text-gray-500">Earnings</Text>
@@ -124,31 +168,23 @@ export default function Home() {
               {title}
             </Text>
           )}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => navigateToOrder(item._id)}
-              className="bg-gray-100 p-3 rounded-full mb-2"
-            >
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row gap-x-4">
-                  <View className="bg-gray-200 w-14 h-14 items-center justify-center rounded-full">
-                    <Feather name="box" size={24} color="green" />
-                  </View>
-                  <View>
-                    <Text className="font-semibold text-gray-900">
-                      {item.user?.name || "Unknown"}
-                    </Text>
-                    <Text className="text-sm text-gray-800 mt-1">
-                      Total: ₹{item.finalAmount}
-                    </Text>
-                  </View>
-                </View>
-                <Feather name="chevron-right" size={24} color="#9CA3AF" />
-              </View>
-            </Pressable>
-          )}
+          renderItem={({ item }) => <OrderItem item={item} />}
         />
       )}
+      <Pressable
+        onPress={() => setShowScanner(true)}
+        className="absolute bottom-6 right-6 bg-green-600 p-4 rounded-full shadow"
+      >
+        <Feather name="camera" size={24} color="white" />
+      </Pressable>
+      <QrScannerModal
+        visible={showScanner}
+        onClose={() => setShowScanner(false)}
+        onScanned={(orderId) => {
+          setShowScanner(false);
+          navigation.navigate("OrderDetail", { orderId });
+        }}
+      />
     </SafeAreaView>
   );
 }
