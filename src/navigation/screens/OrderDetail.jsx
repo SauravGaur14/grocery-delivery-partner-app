@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,21 +6,24 @@ import {
   ActivityIndicator,
   Pressable,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { Linking } from "react-native";
+import { useRoute, useNavigation } from "@react-navigation/native";
+
 import axios from "axios";
+import { API_BASE_URL } from "../../util/config";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import OrderStatusModal from "../../components/OrderStatusModal";
 import EarningsModal from "../../components/EarningsModal";
 import CameraModal from "../../components/CameraModal";
 
-import { Linking } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { API_BASE_URL } from "../../util/config";
 
 export default function OrderDetail() {
   const route = useRoute();
+  const navigation = useNavigation();
+
   const { orderId } = route.params;
 
   const [order, setOrder] = useState(null);
@@ -50,6 +53,7 @@ export default function OrderDetail() {
   const statusUpdateHandler = (newStatus) => {
     if (newStatus.toLowerCase() === "delivered") {
       // Open camera before updating
+
       setPendingStatus(newStatus);
       setShowCamera(true);
     } else {
@@ -250,7 +254,12 @@ export default function OrderDetail() {
         />
         <EarningsModal
           visible={showEarningsModal}
-          onClose={() => setShowEarningsModal(false)}
+          onClose={() => {
+            setShowEarningsModal(false);
+            navigation.navigate("Tabs", {
+              screen: "Home",
+            });
+          }}
           amount={earnedAmount}
         />
       </ScrollView>

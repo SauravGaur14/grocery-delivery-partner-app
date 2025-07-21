@@ -9,6 +9,7 @@ import Profile from "./screens/Profile";
 import OrderDetail from "./screens/OrderDetail";
 import Login from "./screens/Login";
 import { useAuth } from "../context/AuthContext";
+import DeliveryHistory from "./screens/DeliveryHistory";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -46,6 +47,11 @@ export function Navigation({ theme, linking, onReady }) {
               name="OrderDetail"
               component={OrderDetail}
               options={{ title: "Order Details" }}
+            />
+            <Stack.Screen
+              name="DeliveryHistory"
+              component={DeliveryHistory}
+              options={{ title: "Delivery History" }}
             />
           </>
         )}
