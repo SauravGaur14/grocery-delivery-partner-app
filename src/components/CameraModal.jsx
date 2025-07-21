@@ -20,7 +20,7 @@ export default function CameraModal({ visible, onCapture, onCancel }) {
     if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
-        console.log("Captured URI:", photo.uri); // optional
+        // console.log("Captured URI:", photo.uri); // optional
         onCapture();
       } catch (error) {
         console.error("Error taking picture:", error);
