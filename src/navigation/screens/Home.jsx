@@ -44,10 +44,9 @@ export default function Home() {
   const groupAndSortOrders = () => {
     const statusPriority = {
       "out for delivery": 1,
-      pending: 2,
-      packed: 3,
-      return: 4,
-      delivered: 5,
+      packed: 2,
+      return: 3,
+      delivered: 4,
     };
 
     const groups = {};
@@ -81,7 +80,7 @@ export default function Home() {
             <View className="flex-row items-center justify-center gap-x-2 mb-1">
               <MaterialIcons name="pending-actions" size={20} color="#1D4ED8" />
               <Text className="text-xl font-semibold text-blue-700">
-                {orders.filter((o) => o.status === "pending").length}
+                {orders.filter((o) => o.status === "packed").length}
               </Text>
             </View>
             <Text className="text-base text-gray-500">Pending</Text>
