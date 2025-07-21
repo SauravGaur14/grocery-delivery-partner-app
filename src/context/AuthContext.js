@@ -6,18 +6,15 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load token and user from storage on app start
+  // Load user from storage on app start
   useEffect(() => {
     const loadAuthState = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem("token");
         const storedUser = await AsyncStorage.getItem("user");
 
-        if (storedToken && storedUser) {
-          setToken(storedToken);
+        if (storedUser) {
           setUser(JSON.parse(storedUser));
         }
       } catch (err) {
@@ -31,12 +28,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login and persist data
-  const login = async (token, user) => {
-    setToken(token);
+  const login = async (user) => {
     setUser(user);
 
     try {
-      await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("user", JSON.stringify(user));
     } catch (err) {
       console.error("Failed to save auth state", err);
@@ -45,11 +40,9 @@ export const AuthProvider = ({ children }) => {
 
   // Logout and clear data
   const logout = async () => {
-    setToken(null);
     setUser(null);
 
     try {
-      await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("user");
     } catch (err) {
       console.error("Failed to clear auth state", err);
@@ -65,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
