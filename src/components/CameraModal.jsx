@@ -9,7 +9,7 @@ import {
   Button,
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 export default function CameraModal({ visible, onCapture, onCancel }) {
   const cameraRef = useRef(null);
@@ -33,29 +33,31 @@ export default function CameraModal({ visible, onCapture, onCancel }) {
   if (!permission.granted) {
     return (
       <Modal visible={visible} animationType="slide">
-  <View style={styles.container}>
-    {/* Camera fills background */}
-    <CameraView
-      ref={cameraRef}
-      style={StyleSheet.absoluteFill} // full-screen
-      facing={facing}
-      mode="picture"
-    />
+        <View style={styles.container}>
+          {/* Camera fills background */}
+          <CameraView
+            ref={cameraRef}
+            style={StyleSheet.absoluteFill} // full-screen
+            facing={facing}
+            mode="picture"
+          />
 
-    {/* Cancel Button */}
-    <TouchableOpacity style={styles.cancel} onPress={onCancel}>
-      <Ionicons name="close" size={36} color="white" />
-    </TouchableOpacity>
+          {/* Cancel Button */}
+          <TouchableOpacity
+            onPress={onCancel}
+            className="absolute top-10 right-5 bg-white rounded-full p-2"
+          >
+            <Feather name="x" size={28} color="black" />
+          </TouchableOpacity>
 
-    {/* Shutter Button */}
-    <View style={styles.shutterContainer}>
-      <Pressable onPress={handleCapture} style={styles.shutterBtn}>
-        <View style={styles.shutterBtnInner} />
-      </Pressable>
-    </View>
-  </View>
-</Modal>
-
+          {/* Shutter Button */}
+          <View style={styles.shutterContainer}>
+            <Pressable onPress={handleCapture} style={styles.shutterBtn}>
+              <View style={styles.shutterBtnInner} />
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     );
   }
 
@@ -67,19 +69,21 @@ export default function CameraModal({ visible, onCapture, onCancel }) {
           style={styles.camera}
           facing={facing}
           mode="picture"
+        />
+        {/* Cancel Button */}
+        <TouchableOpacity
+          onPress={onCancel}
+          className="absolute top-10 right-5 bg-white rounded-full p-2"
         >
-          {/* Cancel Button */}
-          <TouchableOpacity style={styles.cancel} onPress={onCancel}>
-            <Ionicons name="close" size={36} color="white" />
-          </TouchableOpacity>
+          <Feather name="x" size={28} color="black" />
+        </TouchableOpacity>
 
-          {/* Capture Button */}
-          <View style={styles.shutterContainer}>
-            <Pressable onPress={handleCapture} style={styles.shutterBtn}>
-              <View style={styles.shutterBtnInner} />
-            </Pressable>
-          </View>
-        </CameraView>
+        {/* Capture Button */}
+        <View style={styles.shutterContainer}>
+          <Pressable onPress={handleCapture} style={styles.shutterBtn}>
+            <View style={styles.shutterBtnInner} />
+          </Pressable>
+        </View>
       </View>
     </Modal>
   );
