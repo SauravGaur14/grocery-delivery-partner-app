@@ -29,10 +29,12 @@ export default function DeliveryHistory({ navigation }) {
     try {
       setLoading(true);
       const res = await axios.get(`${API_BASE_URL}/orders/delivery/${userId}`);
+
       const delivered = res.data.filter(
         (order) => order.status === "delivered"
       );
-      setOrders(delivered);
+      const grouped = groupByDate(delivered);
+      setOrders(grouped);
     } catch (err) {
       console.error("Failed to fetch delivery history:", err);
     } finally {
@@ -46,23 +48,28 @@ export default function DeliveryHistory({ navigation }) {
     setRefreshing(false);
   };
 
-  // Pass navigation to OrderItem for navigation
-  const renderItem = (item) => (
-    <OrderItem
-      key={item._id}
-      item={item}
-      navigateToOrder={(id) => {
-        navigation.navigate("OrderDetail", { orderId: id });
-      }}
-    />
-  );
+  const groupByDate = (orders) => {
+    const groups = {};
+
+    orders.forEach((order) => {
+      const dateKey = formatDate(order.deliveryDate);
+      if (!groups[dateKey]) groups[dateKey] = [];
+      groups[dateKey].push(order);
+    });
+
+    return groups;
+  };
+
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-4 pt-4">
-      <Text className="text-xl font-bold text-gray-800 mb-4">
-        Delivery History
-      </Text>
-
+    <SafeAreaView className="flex-1 bg-white px-4">
       {loading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="green" />
@@ -73,12 +80,27 @@ export default function DeliveryHistory({ navigation }) {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          {orders.length === 0 ? (
+          {Object.keys(orders).length === 0 ? (
             <Text className="text-gray-600 text-center mt-10">
               No delivered orders yet.
             </Text>
           ) : (
-            orders.map(renderItem)
+            Object.entries(orders).map(([date, items]) => (
+              <View key={date} className="mb-6">
+                <Text className="text-lg font-semibold text-gray-700 mb-2">
+                  {date}
+                </Text>
+                {items.map((item) => (
+                  <OrderItem
+                    key={item._id}
+                    item={item}
+                    navigateToOrder={(id) => {
+                      navigation.navigate("OrderDetail", { orderId: id });
+                    }}
+                  />
+                ))}
+              </View>
+            ))
           )}
         </ScrollView>
       )}
