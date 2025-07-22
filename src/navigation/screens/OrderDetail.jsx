@@ -165,6 +165,7 @@ export default function OrderDetail() {
                 <Text className="text-gray-700">
                   Subtotal: ₹{item.price * item.qty}
                 </Text>
+                268976
               </View> */}
             </View>
           ))}
