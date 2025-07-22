@@ -16,15 +16,9 @@ export default function QrScannerModal({ visible, onClose, onScanned }) {
 
   const handleBarCodeScanned = ({ data }) => {
     setScanned(true);
-    try {
-      const parsed = JSON.parse(data);
-      if (parsed?._id) {
-        onScanned(parsed._id);
-      } else {
-        alert("Invalid QR Code");
-        onClose();
-      }
-    } catch (e) {
+    if (data && typeof data === "string") {
+      onScanned(data);
+    } else {
       alert("Invalid QR Code");
       onClose();
     }
@@ -80,7 +74,7 @@ export default function QrScannerModal({ visible, onClose, onScanned }) {
 
         <TouchableOpacity
           onPress={onClose}
-          className="absolute top-14 right-5 bg-white rounded-full p-2"
+          className="absolute top-10 right-5 bg-white rounded-full p-2"
         >
           <Feather name="x" size={28} color="black" />
         </TouchableOpacity>
