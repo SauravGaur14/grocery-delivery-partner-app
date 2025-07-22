@@ -173,9 +173,9 @@ export default function Home() {
       )}
       <Pressable
         onPress={() => setShowScanner(true)}
-        className="absolute bottom-6 right-6 bg-green-600 p-4 rounded-full shadow"
+        className="absolute bottom-6 right-6 bg-[#268976] p-4 rounded-full shadow"
       >
-        <Feather name="camera" size={24} color="white" />
+        <MaterialIcons name="qr-code-scanner" size={24} color="white" />
       </Pressable>
       <QrScannerModal
         visible={showScanner}
