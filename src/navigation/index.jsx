@@ -1,4 +1,3 @@
-import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -38,21 +37,29 @@ export function Navigation({ theme, linking, onReady }) {
 
   return (
     <NavigationContainer theme={theme} linking={linking} onReady={onReady}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator>
         {!user ? (
-          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
         ) : (
           <>
-            <Stack.Screen name="Tabs" component={BottomTabs} />
+            <Stack.Screen
+              name="Tabs"
+              component={BottomTabs}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="OrderDetail"
               component={OrderDetail}
-              options={{ title: "Order Details" }}
+              options={{ title: "Order Details" }} 
             />
             <Stack.Screen
               name="DeliveryHistory"
               component={DeliveryHistory}
-              options={{ title: "Delivery History" }}
+              options={{ title: "Delivery History" }} 
             />
           </>
         )}

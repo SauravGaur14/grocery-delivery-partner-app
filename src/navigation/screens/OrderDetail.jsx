@@ -99,15 +99,12 @@ export default function OrderDetail() {
   }
 
   return (
-    <SafeAreaView className="flex-1 px-5 py-3 bg-white">
+    <SafeAreaView className="flex-1 px-5 bg-white">
       <View className="flex-[0.85]">
-        <Text className="text-3xl font-semibold mb-8">Order Details</Text>
         <ScrollView className="" showsVerticalScrollIndicator={false}>
           {/* Order Summary */}
-          <View className="pt-3">
-            <Text className="text-xl font-bold mb-4 text-primary">
-              Summary
-            </Text>
+          <View className="">
+            <Text className="text-xl font-bold mb-4 text-primary">Summary</Text>
             <View className="flex-row items-center justify-between mb-2">
               <Text className="text-gray-800 font-semibold">Order ID:</Text>
               <Text className="text-gray-600 mb-2">{order._id}</Text>
@@ -146,7 +143,10 @@ export default function OrderDetail() {
               Items
             </Text>
             {order.items.map((item, index) => (
-              <View key={index} className="mt-1 w-full flex-row rounded-lg p-3">
+              <View
+                key={index}
+                className="mt-1 py-1 w-full flex-row rounded-lg"
+              >
                 {/* Product Image Placeholder */}
                 <Image
                   source={
