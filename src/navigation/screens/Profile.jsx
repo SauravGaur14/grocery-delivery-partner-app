@@ -51,7 +51,7 @@ function InfoRow(icon, label) {
   return (
     <View key={icon} className="flex-row items-center mb-3">
       <View className="bg-gray-100 w-10 h-10 items-center justify-center rounded-full">
-        <Feather name={icon} size={18} color="green" />
+        <Feather name={icon} size={18} color="#268976" />
       </View>
       <Text className="text-lg text-gray-800 font-medium ml-3">{label}</Text>
     </View>
@@ -67,7 +67,7 @@ function NavRow(icon, label, onPress) {
     >
       <View className="flex-row items-center space-x-2">
         <View className="bg-gray-100 w-10 h-10 items-center justify-center rounded-full">
-          <Feather name={icon} size={20} color="green" />
+          <Feather name={icon} size={20} color="#268976" />
         </View>
         <Text className="text-base text-gray-700 ml-3">{label}</Text>
       </View>

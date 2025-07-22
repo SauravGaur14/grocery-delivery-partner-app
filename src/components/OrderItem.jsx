@@ -17,7 +17,7 @@ export default function OrderItem({ item }) {
       <View className="flex-row items-center justify-between">
         <View className="flex-row gap-x-4">
           <View className="bg-gray-200 w-14 h-14 items-center justify-center rounded-full">
-            <Feather name="box" size={24} color="green" />
+            <Feather name="box" size={24} color="#268976" />
           </View>
           <View>
             <Text className="font-semibold text-gray-900">

@@ -105,7 +105,7 @@ export default function OrderDetail() {
         <ScrollView className="" showsVerticalScrollIndicator={false}>
           {/* Order Summary */}
           <View className="pt-3">
-            <Text className="text-xl font-bold mb-4 text-[#268976]">
+            <Text className="text-xl font-bold mb-4 text-primary">
               Summary
             </Text>
             <View className="flex-row items-center justify-between mb-2">
@@ -123,7 +123,7 @@ export default function OrderDetail() {
 
           {/* Payment Summary */}
           <View className="mt-4 pt-3 border-t border-gray-200">
-            <Text className="text-xl font-semibold text-[#268976] mb-3">
+            <Text className="text-xl font-semibold text-primary mb-3">
               Payment Summary
             </Text>
 
@@ -142,7 +142,7 @@ export default function OrderDetail() {
 
           {/* Items List */}
           <View className="w-full mt-6 border-t border-gray-200">
-            <Text className="text-xl font-semibold mb-4 text-[#268976]">
+            <Text className="text-xl font-semibold mb-4 text-primary">
               Items
             </Text>
             {order.items.map((item, index) => (
@@ -193,7 +193,7 @@ export default function OrderDetail() {
 
           {/* Customer Details */}
           <View className="mt-6 mb-3 pt-3 border-t  border-gray-200">
-            <Text className="text-xl font-bold mb-4 text-[#268976]">
+            <Text className="text-xl font-bold mb-4 text-primary">
               Customer Info
             </Text>
             <View className="flex-row items-center justify-between mb-2">
@@ -224,7 +224,7 @@ export default function OrderDetail() {
                   Linking.openURL(url);
                 }
               }}
-              className="justify-between space-x-2 bg-[#268976] flex-row items-center gap-x-2 py-3 px-4 rounded-full w-[48%]"
+              className="justify-between space-x-2 bg-primary flex-row items-center gap-x-2 py-3 px-4 rounded-full w-[48%]"
             >
               <FontAwesome5 name="directions" size={20} color="white" />
               <Text
@@ -239,7 +239,7 @@ export default function OrderDetail() {
             {/* Call Customer Button */}
             <Pressable
               onPress={() => Linking.openURL(`tel:${order.user?.phone}`)}
-              className="flex-row bg-[#268976] items-center justify-between py-3 px-4 rounded-full w-[48%]"
+              className="flex-row bg-primary items-center justify-between py-3 px-4 rounded-full w-[48%]"
             >
               <MaterialIcons name="call-end" size={20} color="white" />
               <Text className="text-white text-sm">Contact Customer</Text>
@@ -247,7 +247,7 @@ export default function OrderDetail() {
           </View>
           <Pressable
             onPress={() => setShowStatusModal(true)}
-            className="mt-2 mb-4 bg-[#268976] text-xl text-center py-4 items-center rounded-full self-center w-full"
+            className="mt-2 mb-4 bg-primary text-xl text-center py-4 items-center rounded-full self-center w-full"
           >
             <Text className="text-white font-medium">Update Status</Text>
           </Pressable>

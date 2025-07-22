@@ -65,7 +65,7 @@ export default function OrderStatusModal({
 
               <Pressable
                 onPress={handleUpdate}
-                className="mt-4 bg-green-700 py-3 rounded-full"
+                className="mt-4 bg-primary py-3 rounded-full"
               >
                 <Text className="text-center text-white font-bold">
                   Update Status
