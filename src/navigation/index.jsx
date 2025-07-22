@@ -19,6 +19,7 @@ function BottomTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarActiveTintColor: "#268976",
         tabBarIcon: ({ color, size }) => {
           let iconName =
             route.name === "Home" ? "home-outline" : "person-outline";

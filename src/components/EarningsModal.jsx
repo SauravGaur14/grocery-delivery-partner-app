@@ -24,7 +24,7 @@ const EarningsModal = ({ visible, onClose, amount }) => {
 
         <TouchableOpacity
           onPress={onClose}
-          className="bg-green-600 px-10 py-3 rounded-full absolute bottom-10 self-center"
+          className="bg-primary px-10 py-3 rounded-full absolute bottom-10 self-center"
         >
           <Text className="text-white font-semibold text-xl">Continue</Text>
         </TouchableOpacity>
